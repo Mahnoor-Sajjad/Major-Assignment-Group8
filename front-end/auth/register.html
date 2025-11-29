@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        :root {
+            --bg: #1b1b2f;
+            --card: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.2);
+            --accent: linear-gradient(120deg, #ff1493, #8a2be2);
+            --text: #fff;
+            --muted: rgba(255, 255, 255, 0.75);
+            --input-bg: rgba(255, 255, 255, 0.12);
+            --error: #ffb3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #8a2be2, var(--bg) 60%);
+            color: var(--text);
+        }
+
+        .card {
+            width: min(420px, 90vw);
+            padding: 32px;
+            border-radius: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: none;
+            background: var(--input-bg);
+            color: var(--text);
+            transition: outline 0.2s ease;
+        }
+
+        input:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.65);
+        }
+
+        .field + .field {
+            margin-top: 18px;
+        }
+
+        .error {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: var(--error);
+            min-height: 17px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 28px;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: var(--accent);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .note {
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 16px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Create account</h1>
+        <form id="registerForm" novalidate>
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" name="username" minlength="3" placeholder="at least 3 characters" required>
+                <p class="error" data-error="username"></p>
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" required>
+                <p class="error" data-error="email"></p>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" minlength="8" required>
+                <p class="error" data-error="password"></p>
+            </div>
+
+            <div class="field">
+                <label for="confirm">Confirm password</label>
+                <input id="confirm" name="confirm" type="password" minlength="8" required>
+                <p class="error" data-error="confirm"></p>
+            </div>
+
+            <div class="field">
+                <label for="role">Account Type</label>
+                <select id="role" name="role" style="width: 100%; padding: 12px 14px; border-radius: 10px; border: none; background: var(--input-bg); color: var(--text);">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+                <p class="error" data-error="role"></p>
+            </div>
+
+            <button type="submit">Register</button>
+            <p class="note">We only keep what is needed to open your account.</p>
+            <p class="note" style="margin-top: 8px;">
+                Already have an account? <a href="login.html" style="color: #ff9ddf;">Login here</a>
+            </p>
+        </form>
+    </main>
+
+    <script src="../../back-end/auth/auth.js"></script>
+    <script>
+        const form = document.getElementById('registerForm');
+        const fields = ['username', 'email', 'password', 'confirm'];
+        const authManager = new AuthManager();
+
+        const validators = {
+            username: value => value.trim().length >= 3 ? '' : 'Use 3 or more characters.',
+            email: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Enter a valid email.',
+            password: value => value.length >= 8 ? '' : 'Password must be 8+ characters.',
+            confirm: (value, data) => value === data.password ? '' : 'Passwords do not match.'
+        };
+
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+
+            const data = Object.fromEntries(new FormData(form));
+            let hasError = false;
+
+            // Clear previous errors
+            fields.forEach(field => {
+                document.querySelector(`[data-error="${field}"]`).textContent = '';
+            });
+
+            // Validate fields
+            fields.forEach(field => {
+                const message = validators[field](data[field] || '', data);
+                document.querySelector(`[data-error="${field}"]`).textContent = message;
+                if (message) hasError = true;
+            });
+
+            if (hasError) {
+                return;
+            }
+
+            // Disable form during registration
+            const submitBtn = form.querySelector('button');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+
+            try {
+                const result = await authManager.register({
+                    username: data.username.trim(),
+                    email: data.email.trim(),
+                    password: data.password,
+                    role: data.role || 'student'
+                });
+
+                if (result.success) {
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center;';
+                    successMsg.textContent = 'Account created successfully! Redirecting to login...';
+                    form.appendChild(successMsg);
+
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    // Show error message
+                    const errorMsg = document.createElement('div');
+                    errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center;';
+                    errorMsg.textContent = result.message;
+                    form.appendChild(errorMsg);
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Register';
+                    
+                    // Remove error message after 5 seconds
+                    setTimeout(() => {
+                        if (errorMsg.parentNode) {
+                            errorMsg.parentNode.removeChild(errorMsg);
+                        }
+                    }, 5000);
+                }
+            } catch (error) {
+                const errorMsg = document.createElement('div');
+                errorMsg.style.cssText = 'background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center;';
+                errorMsg.textContent = 'An error occurred. Please try again.';
+                form.appendChild(errorMsg);
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register';
+            }
+        });
+    </script>
+</body>
+</html>
