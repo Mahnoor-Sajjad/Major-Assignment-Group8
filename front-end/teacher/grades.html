@@ -1,9 +1,62 @@
-<!--
-Teacher can view enrolled students for their courses
-Teacher can enter or update grades
-Navigation back to Teacher Dashboard
-Optional: simple table with columns: Student Name, Course, Grade
-(Optional: Teacher Dashboard page)
-Quick overview of courses assigned to them
-Links to the grades page
--->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grades - Teacher Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <h1>Grades Page</h1>
+    <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <div class="container">
+    <h2>Student Grades</h2>
+
+    <div class="table-section">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Student Name</th>
+            <th>Course</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="grades-rows">
+          <!-- JS will fill rows -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Sample data for grades
+    const gradesData = [
+      { id: 1, name: 'Ayesha Khan', course: 'Database Systems', grade: 'A' },
+      { id: 2, name: 'Mahnoor Sajjad', course: 'Web Engineering', grade: 'B+' },
+      { id: 3, name: 'Warda Mehmood', course: 'Programming Fundamentals', grade: 'A-' },
+      { id: 4, name: 'Hamza Ali', course: 'Software Engineering', grade: 'B' },
+      { id: 5, name: 'Muhammad Abbas', course: 'Data Structures', grade: 'A' },
+      { id: 6, name: 'Muhammad Danyal', course: 'Operating Systems', grade: 'B-' },
+    ];
+
+    const tbody = document.getElementById('grades-rows');
+    gradesData.forEach(student => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${student.id}</td>
+        <td>${student.name}</td>
+        <td>${student.course}</td>
+        <td><input type="text" value="${student.grade}" class="grade-input"></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  </script>
+
+</body>
+</html>

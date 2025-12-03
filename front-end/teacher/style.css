@@ -1,0 +1,138 @@
+/* ---------- Base Styles ---------- */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f0f4f8;
+  margin: 0;
+  padding: 0 20px;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 30px;
+  color: #1e3a8a;
+  font-size: 32px;
+}
+
+h2 {
+  color: #1e3a8a;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+/* ---------- Teacher Info ---------- */
+.teacher-info {
+  text-align: center;
+  background-color: #2563eb;
+  color: #fff;
+  padding: 15px 0;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  font-size: 20px;
+}
+
+/* ---------- Cards ---------- */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.card {
+  background-color: #fff;
+  flex: 1 1 200px;
+  max-width: 250px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+/* Recent submissions as horizontal badges */
+.recent-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.recent-tags .tag {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.recent-tags .tag:hover {
+  background-color: #c7d2fe;
+  transform: scale(1.05);
+}
+
+/* ---------- Student Table ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  background-color: #fff;
+  margin-bottom: 40px;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+tr:nth-child(even) {
+  background-color: #f3f4f6;
+}
+
+tr:hover {
+  background-color: #e0e7ff;
+}
+
+td.status-present {
+  color: green;
+  font-weight: bold;
+}
+
+td.status-absent {
+  color: red;
+  font-weight: bold;
+}
+
+td.grade {
+  font-weight: bold;
+}
