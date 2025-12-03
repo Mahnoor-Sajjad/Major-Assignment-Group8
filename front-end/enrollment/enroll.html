@@ -205,3 +205,101 @@ Optional JS for validation or handling button clicks
             </div>
         </div>
     </div>
+
+        <script src="../../back-end/courses/courses.js"></script>
+    <script src="../../back-end/enrollment/enrollment.js"></script>
+    <script src="../../back-end/auth/auth.js"></script>
+    <script>
+        const authManager = new AuthManager();
+        const courseManager = new CourseManager();
+        const enrollmentManager = new EnrollmentManager();
+        const currentUser = authManager.getCurrentUser();
+
+        // Check authentication
+        if (!currentUser) {
+            window.location.href = '../auth/login.html';
+        } else if (currentUser.role !== 'student') {
+            window.location.href = '../courses/teacher_courses.html';
+        }
+
+        let allCourses = [];
+        let enrolledCourseIds = [];
+
+        // Load courses and enrollments
+        async function loadData() {
+            try {
+                allCourses = await courseManager.getAllCourses();
+                const enrollments = await enrollmentManager.getEnrollmentsByStudent(currentUser.id);
+                enrolledCourseIds = enrollments.map(e => e.courseId);
+                displayCourses(allCourses);
+            } catch (error) {
+                showMessage('Error loading courses: ' + error.message, 'error');
+            }
+        }
+
+        // Display courses
+        function displayCourses(courses) {
+            const container = document.getElementById('coursesContainer');
+            
+            if (courses.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No courses available</h3></div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => {
+                const isEnrolled = enrolledCourseIds.includes(course.id);
+                return `
+                    <div class="course-item">
+                        <div class="course-info">
+                            <h3>${course.name}</h3>
+                            <div class="teacher">Teacher: ${course.teacherName}</div>
+                            <div class="description">${course.description || 'No description available'}</div>
+                        </div>
+                        <div>
+                            ${isEnrolled ? 
+                                '<span class="enrolled-badge">✓ Enrolled</span>' : 
+                                `<button class="enroll-btn" onclick="enrollInCourse('${course.id}')">Enroll</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Enroll in course
+        async function enrollInCourse(courseId) {
+            try {
+                const result = await enrollmentManager.enrollStudent(
+                    currentUser.id,
+                    courseId,
+                    currentUser.username
+                );
+
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    enrolledCourseIds.push(courseId);
+                    loadData(); // Reload to update UI
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error enrolling: ' + error.message, 'error');
+            }
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 3000);
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
