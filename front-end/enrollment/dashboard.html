@@ -12,3 +12,335 @@ Header: “My Courses / Dashboard”
 Table or cards listing enrolled courses
 Progress bar or simple text showing completion/grades
 -->
+<!--
+Purpose:
+This is the student dashboard for viewing enrolled courses and progress.
+
+Content / What it should contain:
+List of courses the student is enrolled in (read from enrollments.txt)
+Show progress, grades, or status for each course (if available)
+Navigation links back to Home or Courses page
+
+Example Sections:
+Header: “My Courses / Dashboard”
+Table or cards listing enrolled courses
+Progress bar or simple text showing completion/grades
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Mini LMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2rem;
+        }
+
+        .welcome-text {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .courses-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .courses-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .course-card .teacher {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .course-card .grade {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .grade-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .grade-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .no-grade {
+            color: #999;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .empty-state a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .empty-state a:hover {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>My Dashboard</h1>
+                <p class="welcome-text" id="welcomeText">Welcome back!</p>
+            </div>
+            <div class="nav-links">
+                <a href="../courses/student_courses.html">Browse Courses</a>
+                <a href="../../index.html">Home</a>
+            </div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="totalCourses">0</div>
+                <div class="label">Enrolled Courses</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="avgGrade">-</div>
+                <div class="label">Average Grade</div>
+            </div>
+        </div>
+
+        <div class="courses-section">
+            <h2>My Enrolled Courses</h2>
+            <div id="coursesContainer" class="courses-grid">
+                <div class="loading">Loading your courses...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../back-end/courses/courses.js"></script>
+    <script src="../../back-end/enrollment/enrollment.js"></script>
+    <script src="../../back-end/auth/auth.js"></script>
+    <script>
+        const authManager = new AuthManager();
+        const enrollmentManager = new EnrollmentManager();
+        const currentUser = authManager.getCurrentUser();
+
+        // Check authentication
+        if (!currentUser) {
+            window.location.href = '../auth/login.html';
+        } else if (currentUser.role !== 'student') {
+            window.location.href = '../courses/teacher_courses.html';
+        }
+
+        // Set welcome message
+        document.getElementById('welcomeText').textContent = `Welcome back, ${currentUser.username}!`;
+
+        // Load student's courses
+        async function loadCourses() {
+            try {
+                const studentCourses = await enrollmentManager.getStudentCourses(currentUser.id);
+                displayCourses(studentCourses);
+                updateStats(studentCourses);
+            } catch (error) {
+                document.getElementById('coursesContainer').innerHTML = 
+                    '<div class="empty-state"><h3>Error loading courses</h3><p>' + error.message + '</p></div>';
+            }
+        }
+
+        // Display courses
+        function displayCourses(courses) {
+            const container = document.getElementById('coursesContainer');
+            
+            if (courses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No courses enrolled yet</h3>
+                        <p>Start by browsing available courses and enroll in your first course!</p>
+                        <a href="../courses/student_courses.html">Browse Courses</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = courses.map(enrollment => {
+                const course = enrollment.course || {};
+                const grade = enrollment.grade !== null ? enrollment.grade : null;
+                
+                return `
+                    <div class="course-card">
+                        <h3>${course.name || enrollment.courseName}</h3>
+                        <div class="teacher">Teacher: ${course.teacherName || 'Unknown'}</div>
+                        ${course.description ? `<p style="color: #666; margin-top: 10px;">${course.description}</p>` : ''}
+                        <div class="grade">
+                            ${grade !== null ? `
+                                <div>
+                                    <div class="grade-label">Grade</div>
+                                    <div class="grade-value">${grade}%</div>
+                                </div>
+                            ` : `
+                                <div class="no-grade">No grade assigned yet</div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update statistics
+        function updateStats(courses) {
+            document.getElementById('totalCourses').textContent = courses.length;
+            
+            const grades = courses
+                .map(c => c.grade)
+                .filter(g => g !== null && g !== undefined);
+            
+            if (grades.length > 0) {
+                const avg = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1);
+                document.getElementById('avgGrade').textContent = avg + '%';
+            } else {
+                document.getElementById('avgGrade').textContent = '-';
+            }
+        }
+
+        // Initialize
+        loadCourses();
+    </script>
+</body>
+</html>
