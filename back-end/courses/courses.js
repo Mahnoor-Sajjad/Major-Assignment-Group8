@@ -193,4 +193,5 @@ class CourseManager {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CourseManager;
 }
-
+                }
+                    

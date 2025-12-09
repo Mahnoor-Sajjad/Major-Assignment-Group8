@@ -122,6 +122,7 @@ class EnrollmentManager {
 
         return { success: true, message: 'Enrolled successfully', enrollment };
     }
+feature/teacher-backend
 
     // Unenroll student from a course
     async unenrollStudent(studentId, courseId) {
@@ -161,5 +162,8 @@ class EnrollmentManager {
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = EnrollmentManager;
+}
+
+=======
 }
 
