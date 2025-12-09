@@ -122,4 +122,48 @@ class EnrollmentManager {
 
         return { success: true, message: 'Enrolled successfully', enrollment };
     }
+feature/teacher-backend
+
+    // Unenroll student from a course
+    async unenrollStudent(studentId, courseId) {
+        const enrollments = await this.getEnrollments();
+        const filtered = enrollments.filter(e => !(e.studentId === studentId && e.courseId === courseId));
+
+        if (enrollments.length === filtered.length) {
+            return { success: false, message: 'Enrollment not found' };
+        }
+
+        await this.saveEnrollments(filtered);
+        return { success: true, message: 'Unenrolled successfully' };
+    }
+
+    // Get student's enrolled courses with details
+    async getStudentCourses(studentId) {
+        const enrollments = await this.getEnrollmentsByStudent(studentId);
+        const courseManager = this.getCourseManager();
+        const courses = await courseManager.getCourses();
+        
+        return enrollments.map(enrollment => {
+            const course = courses.find(c => c.id === enrollment.courseId);
+            return {
+                ...enrollment,
+                course: course || null
+            };
+        });
+    }
+
+    // Check if student is enrolled in course
+    async isEnrolled(studentId, courseId) {
+        const enrollments = await this.getEnrollments();
+        return enrollments.some(e => e.studentId === studentId && e.courseId === courseId);
+    }
 }
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EnrollmentManager;
+}
+
+=======
+}
+
